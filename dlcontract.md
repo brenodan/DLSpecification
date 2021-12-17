@@ -153,7 +153,20 @@ So, we propose this technique to annotate respective Keras API in the later part
 We can achieve this goal by writing our designed contracts on top of compile API and Fit API with the ML variables that have the abstraction. The current DbC does not provide such kind of mechanism to write contracts without the formal parameters of an API and also write contracts involving multiple parameters.
 To detect the issue with the last layer activation function and appropriate loss for multiclass classification, we can write the below contract. Our runtime assertion checker can detect contract violations without anything to do on the client application developer side.
 
+We can write below contracts on compile API to specify accurate activation function for multiclass and binary classification in the following way:
 
+```python
+@contract(context='last_layer', activation='softmax', loss_func='categorical_crossentropy')
+@contract(context='last_layer', activation='activation_func_binary', loss_func='str,=$binary_crossentropy')
+def compile(self,
+            optimizer='rmsprop',
+            loss=None,
+            metrics=None,
+            loss_weights=None,
+            sample_weight_mode=None,
+            weighted_metrics=None,
+            **kwargs):
+```
 
 
 ## Questions and Discussion Topics
