@@ -37,16 +37,6 @@ The headline in the release notes or blog post could be:
 **Design by deep learning contracts for Keras APIs**
  
 ## Design Proposal
- 
- 
-Factors to consider include:
- 
-* UX and usability (Show demo)
-* How will this change impact users, and how will that be managed? (Show demo)
-* Performance implications 
-* Dependencies (Pycontracts)
-* Maintenance (Not sure)
-* Backwards compatibility (<Python 3.9)
 
 To demonstrate the usability of DL Contract, let us consider a simple Convolutional Neural Network(CNN) that achieves 99% test accuracy MNIST dataset from Keras documentation [https://keras.io/examples/vision/mnist_convnet/]. The following buggy example (accuracy~9.78%) shows the three different structure-related bugs which could appear in this DNN model. If the data is not normalized before it is fed into the Fit API [7, 8] (lines 5, 6). If ‘relu’ or ‘sigmoid’ activation functions have been used in the last layer (line 19) of Dense API [2, 6, 7]. If loss=‘binary_crossentropy’ (line 20) has been applied as the loss function of Compile API [2, 4, 11]. 
 
@@ -179,7 +169,7 @@ Contract violation for Model:fit(). zero_gradients_percentage of 12.07 caused dy
 activation function should not be relu.
 ```
 
-We have performed extensive evaluation real world buggy programs in the benchmarks [References] comprised of different structure, training related bugs mainly for classification and regression problems. But we believe this approach could be easily incorporated with other models and other classes of bugs.
+We have performed extensive evaluation real world buggy programs in the benchmarks [References] comprised of different structure, training related bugs mainly for classification and regression problems. But we believe this approach could be easily incorporated with other models and other classes of bugs. We have also measure that with DL contract enabled, the runtime and memory overhead is fairly minimal. We have tested with Python 3.6, 3.7, 3.8 and different version of Keras 2.x. 
 
 ## Questions and Discussion Topics
 
