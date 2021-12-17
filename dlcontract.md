@@ -27,7 +27,7 @@ The library developers who will annotate contracts need background information a
  
 The end-users who will develop DL applications don’t need any background information about those contracts as they just use the new version of Keras with annotated contracts.
  
-Currently, Keras app developers sometimes do not receive the expected output from API and . This is a problem because the existing documentation also states the valid usage of those APIs. Several StackOverflow posts and GitHub commits show such kinds of problems. Several research publications investigate this issue while putting forward debugging techniques (i.e., DeepLocalize (ICSE 21), AUTOTRAINER (ICSE 21), NeuraLint (TOSEM), UMLAUT (CHI 21), and DeepDiagnosis (ICSE 22)). But we envision that leveraging the Design-by-Contract principles on Keras can help address the problem above while requiring less effort than previous methods.
+Currently, Keras app developers sometimes do not receive the expected output from API and . This is a problem because the existing documentation also states the valid usage of those APIs. Several StackOverflow posts and GitHub commits show such kinds of problems. Several research publications investigate this issue while putting forward debugging techniques (i.e., DeepLocalize [1] (ICSE 21), AUTOTRAINER (ICSE 21), NeuraLint (TOSEM), UMLAUT (CHI 21)). But we envision that leveraging the Design-by-Contract principles on Keras can help address the problem above while requiring less effort than previous methods.
  
 ## User Benefit
  
@@ -116,7 +116,7 @@ Contract Breach for context given last_layer activation_function must not be rel
 ```
 
 
-Again, there is a challenge to specify data properties whether data has been properly fed or not into the training API. Because such properties are not visible at the functional interface. For instance, 3 data should be normalized before calling Fit API because unnormalized data may affect the classification performance [47]. There are multiple ways to achieve data normalization in data prepossessing or during the model compilation ML pipeline stage. For example, scaling dataset at the prepossessing stage [5] or adding batch normalization layer [28] in the model compilation stage. In this regard, traditional static checking or runtime assertion with the existing DbC technique can not precisely detect this data normalization problem before the training. Thus, it is difficult to specify a particular DL API at a particular stage of the pipeline with only its parameters and apply the DbC technique [42] directly for developing DL software without incurring such types of bugs.
+Again, there is a challenge to specify data properties whether data has been properly fed or not into the training API. Because such properties are not visible at the functional interface. For instance, 3 data should be normalized before calling Fit API because unnormalized data may affect the classification performance [5]. There are multiple ways to achieve data normalization in data prepossessing or during the model compilation ML pipeline stage. For example, scaling dataset at the prepossessing stage [6] or adding batch normalization layer [7] in the model compilation stage. In this regard, traditional static checking or runtime assertion with the existing DbC technique can not precisely detect this data normalization problem before the training. Thus, it is difficult to specify a particular DL API at a particular stage of the pipeline with only its parameters and apply the DbC technique [8] directly for developing DL software without incurring such types of bugs.
 
 In our proposed technique we can write the following contract on top of Fit API. 
 ```python
@@ -153,7 +153,7 @@ Application developers can get error message without adding other custom callbac
 
 In addition to this kind of data properties and model architecture related bugs, our proposed technique will also address to specifying training realted propoerties and handle well known training problems. 
 
-For instance, when training a DNN with ReLu as the activation function, the gradients of a large percentage of the neurons are zero, and the training accuracy is low [54]. We convert this training behavior as postcondition (expectation from training API) and correct activation function, which is precondition (obligations of client code). We use the ML variable ‘zero_gradients_percentage’ to specify the percentage of neurons whose gradients is 0 in recent iterations. Example 4.1 shows a contract on Keras Fit API that captures properties of hidden layers’ activation functions and corresponding training problems.
+For instance, when training a DNN with ReLu as the activation function, the gradients of a large percentage of the neurons are zero, and the training accuracy is low [2]. We convert this training behavior as postcondition (expectation from training API) and correct activation function, which is precondition (obligations of client code). We use the ML variable ‘zero_gradients_percentage’ to specify the percentage of neurons whose gradients is 0 in recent iterations. Example 4.1 shows a contract on Keras Fit API that captures properties of hidden layers’ activation functions and corresponding training problems.
 
 ```python
 @contract(context = ‘hidden_layers’,activation!=‘relu’,zero_gradients_percentage≤𝜆, accuracy≤𝜃)
@@ -170,6 +170,33 @@ activation function should not be relu.
 ```
 
 We have performed extensive evaluation real world buggy programs in the benchmarks [References] comprised of different structure, training related bugs mainly for classification and regression problems. But we believe this approach could be easily incorporated with other models and other classes of bugs. We have also measure that with DL contract enabled, the runtime and memory overhead is fairly minimal. We have tested with Python 3.6, 3.7, 3.8 and different version of Keras 2.x. 
+
+## References
+
+[1] Mohammad Wardat, Wei Le, and Hridesh Rajan. 2021. DeepLocalize: Fault Localization for Deep Neural Networks. In
+ICSE’21: The 43rd International Conference on Software Engineering.
+
+[2] Xiaoyu Zhang, Juan Zhai, Shiqing Ma, and Chao Shen. 2021. AUTOTRAINER: An Automatic DNN Training Problem
+Detection and Repair System. In ICSE’21: The 43rd International Conference on Software Engineering
+
+[3] Amin Nikanjam, Houssem Ben Braiek, Mohammad Mehdi Morovati, and Foutse Khomh. 2021. Automatic Fault
+Detection for Deep Learning Programs Using Graph Transformations. ACM Trans. Softw. Eng. Methodol. 30, 5 (2021),
+26 pages.
+
+[4] Eldon Schoop, Forrest Huang, and Björn Hartmann. May 8–13, 2021. UMLAUT: Debugging Deep Learning Programs
+using Program Structure and Model Behavior. In Proceedings of the 2020 CHI Conference on Human Factors in Computing
+Systems.
+
+[5] Dalwinder Singh and Birmohan Singh. 2020. Investigating the impact of data normalization on classification performance. Applied Soft Computing 97 (2020), 105524.
+
+[6] Simple MNIST convnet example from Keras documentation. https://keras.io/examples/vision/mnist_convnet/.
+
+[7] Sergey Ioffe and Christian Szegedy. 2015. Batch normalization: Accelerating deep network training by reducing
+internal covariate shift. In International conference on machine learning. PMLR, 448–456.
+
+[8] B. Meyer. 1992. Applying ’design by contract’. Computer 25, 10 (1992), 40–51. https://doi.org/10.1109/2.161279
+
+
 
 ## Questions and Discussion Topics
 
